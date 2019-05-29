@@ -18,6 +18,17 @@ def calc_max_bankroll(bankroll: int, win_chance: int, turns: int) -> int:
     return bankroll
 
 
+def input_option(msg: str) -> str:
+    option: str
+    while True:
+        try:
+            option = input(msg).upper()
+            break
+        except (KeyboardInterrupt, EOFError):
+            print(end='\n')
+    return option
+
+
 def main() -> None:
     turns: int = 4
 
@@ -43,9 +54,11 @@ def main() -> None:
         print(f'{"-" * 70}\nOptimal bet: ({optimal_bet:,}) {optimal_bet}')
 
         if i < turns - 1:
-            result: str = input('[W]in or [L]oss: ').upper()
-            bankroll += optimal_bet if result == 'W' else -optimal_bet
-            win_chance = win_chance + 1 if result == 'W' else 70
+            option: str = input_option('[W]in, [L]oss or [Q]uit: ')
+            if option == 'Q':
+                break
+            bankroll += optimal_bet if option == 'W' else -optimal_bet
+            win_chance = win_chance + 1 if option == 'W' else 70
 
 
 try:
