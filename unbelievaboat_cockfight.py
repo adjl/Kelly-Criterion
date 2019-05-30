@@ -30,7 +30,7 @@ def calc_all_outcomes(
     if turn == 0:
         outcomes.append(bankroll)
     else:
-        bet_size = calc_bet_size(bankroll, win_chance)
+        bet_size: int = calc_bet_size(bankroll, win_chance)
         calc_all_outcomes(outcomes, bankroll + bet_size, win_chance + 1, turn - 1)
         calc_all_outcomes(outcomes, bankroll - bet_size, base_chance, turn - 1)
     return outcomes
