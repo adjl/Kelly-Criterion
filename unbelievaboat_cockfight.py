@@ -11,10 +11,9 @@ base_chance: int = 70
 
 
 def input_option(msg: str) -> str:
-    option: str
     while True:
         try:
-            option = input(msg).upper()
+            option: str = input(msg).upper()
             break
         except (KeyboardInterrupt, EOFError):
             print(end='\n')
@@ -45,58 +44,48 @@ def calc_stats(
     return win_outcomes, loss_outcomes
 
 
-def print_profit_stats(bankroll: int, win_outcomes: List[int]) -> None:
-    max_profit: int = max(win_outcomes) - bankroll
-    max_profit_pct: float = max_profit / bankroll * 100.0
+def calc_value_pct(bankroll: int, outcome: int) -> Tuple[int, float]:
+    value: int = math.ceil(math.fabs(bankroll - outcome))
+    pct: float = value / bankroll * 100.0
+    return value, pct
 
+
+def print_profit_stats(bankroll: int, win_outcomes: List[int]) -> None:
+    max_profit, max_profit_pct = calc_value_pct(bankroll, max(win_outcomes))
     print(f'Max profit forecast: {max(win_outcomes):,}', end=' ')
     print(f'(+{max_profit:,}, +{max_profit_pct:.2f}%)')
 
     avg_profit_bankroll: int = math.ceil(sum(win_outcomes) / len(win_outcomes))
-    avg_profit: int = avg_profit_bankroll - bankroll
-    avg_profit_pct: float = avg_profit / bankroll * 100.0
-
+    avg_profit, avg_profit_pct = calc_value_pct(bankroll, avg_profit_bankroll)
     print(f'Avg profit forecast: {avg_profit_bankroll:,}', end=' ')
     print(f'(+{avg_profit:,}, +{avg_profit_pct:.2f}%)')
 
-    min_profit: int = min(win_outcomes) - bankroll
-    min_profit_pct: float = min_profit / bankroll * 100.0
-
+    min_profit, min_profit_pct = calc_value_pct(bankroll, min(win_outcomes))
     print(f'Min profit forecast: {min(win_outcomes):,}', end=' ')
     print(f'(+{min_profit:,}, +{min_profit_pct:.2f}%)')
 
 
 def print_loss_stats(bankroll: int, loss_outcomes: List[int]) -> None:
-    min_loss: int = bankroll - max(loss_outcomes)
-    min_loss_pct: float = min_loss / bankroll * 100.0
-
+    min_loss, min_loss_pct = calc_value_pct(bankroll, max(loss_outcomes))
     print(f'Min loss forecast: {max(loss_outcomes):,}', end=' ')
     print(f'(-{min_loss:,}, -{min_loss_pct:.2f}%)')
 
     avg_loss_bankroll: int = math.ceil(sum(loss_outcomes) / len(loss_outcomes))
-    avg_loss: int = bankroll - avg_loss_bankroll
-    avg_loss_pct: float = avg_loss / bankroll * 100.0
-
+    avg_loss, avg_loss_pct = calc_value_pct(bankroll, avg_loss_bankroll)
     print(f'Avg loss forecast: {avg_loss_bankroll:,}', end=' ')
     print(f'(-{avg_loss:,}, -{avg_loss_pct:.2f}%)')
 
-    max_loss: int = bankroll - min(loss_outcomes)
-    max_loss_pct: float = max_loss / bankroll * 100.0
-
+    max_loss, max_loss_pct = calc_value_pct(bankroll, min(loss_outcomes))
     print(f'Max loss forecast: {min(loss_outcomes):,}', end=' ')
     print(f'(-{max_loss:,}, -{max_loss_pct:.2f}%)')
 
 
 def main() -> None:
-    turns: int = 4
-
     bankroll: int = int(input('Bankroll: '))
     win_chance: int = int(input('Chance of winning: '))
+    turns: int = 4
 
-    win_outcomes: List[int]
-    loss_outcomes: List[int]
     win_outcomes, loss_outcomes = calc_stats(bankroll, win_chance, turns)
-
     print(f'{"-" * base_chance}')
     print_profit_stats(bankroll, win_outcomes)
     print_loss_stats(bankroll, loss_outcomes)
