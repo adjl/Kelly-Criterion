@@ -115,8 +115,8 @@ def main() -> None:
     turns: int = 4
 
     bankroll: int = 0
+    increment: int = 1000000000
     if total_bankroll > min_bankroll:
-        increment: int = 1000000000
         bankroll = calc_bankroll(
             (total_bankroll, min_bankroll, win_chance), increment, turns)
     if bankroll == 0 or bankroll >= total_bankroll:
