@@ -10,6 +10,10 @@ from typing import Tuple
 base_chance: int = 70
 
 
+def print_separator() -> None:
+    print(f'{"-" * base_chance}')
+
+
 def input_option(msg: str) -> str:
     while True:
         try:
@@ -89,13 +93,13 @@ def main() -> None:
     turns: int = 4
 
     win_outcomes, loss_outcomes = calc_stats(bankroll, win_chance, turns)
-    print(f'{"-" * base_chance}')
+    print_separator()
     print_profit_stats(bankroll, win_outcomes)
     print_loss_stats(bankroll, loss_outcomes)
 
     for _ in range(turns):
         optimal_bet: int = calc_bet_size(bankroll, win_chance)
-        print(f'{"-" * base_chance}')
+        print_separator()
         print(f'Optimal bet: ({optimal_bet:,}) {optimal_bet}')
 
         option: str = input_option('[W]in, [L]oss or [Q]uit: ')
@@ -105,7 +109,7 @@ def main() -> None:
         win_chance = win_chance + 1 if option == 'W' else base_chance
 
     bankroll_value, bankroll_pct = calc_value_pct(init_bankroll, bankroll)
-    print(f'{"-" * base_chance}')
+    print_separator()
     print(f'Current bankroll: {bankroll:,}', end=' ')
     print(f'({bankroll_value:+,}, {bankroll_pct:+.2f}%)')
     print(f'Current win chance: {win_chance} ({win_chance - init_win_chance:+})')
