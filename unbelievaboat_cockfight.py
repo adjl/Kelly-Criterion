@@ -112,23 +112,15 @@ def main() -> None:
     total_bankroll: int = int_input('Total bankroll: ')
     min_bankroll: int = int_input('Minimum outcome: ')
     win_chance: int = int(input('Chance of winning: '))
-
-    increment: int = 1000000000
     turns: int = 4
 
-    total_bankroll_rnd: int = round_to_inc(total_bankroll, increment)
-    bankroll: int = total_bankroll_rnd // 2
-
-    while bankroll < total_bankroll_rnd:
-        max_loss, _ = calc_value_pct(
-            bankroll, min(calc_stats(bankroll, win_chance, turns)[1]))
-        if math.ceil(math.fabs(max_loss)) >= total_bankroll - min_bankroll:
-            bankroll -= increment
-            break
-        bankroll += increment
-
-    if bankroll >= total_bankroll:
-        bankroll = total_bankroll_rnd // 2
+    bankroll: int = 0
+    if total_bankroll > min_bankroll:
+        increment: int = 1000000000
+        bankroll = calc_bankroll(
+            (total_bankroll, min_bankroll, win_chance), increment, turns)
+    if bankroll == 0 or bankroll >= total_bankroll:
+        bankroll = round_to_inc(total_bankroll, increment) // 2
 
     init_bankroll: int = bankroll
     init_win_chance: int = win_chance
