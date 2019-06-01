@@ -63,6 +63,21 @@ def calc_value_pct(bankroll: int, outcome: int) -> Tuple[int, float]:
     return value, pct
 
 
+def calc_bankroll(stats: Tuple[int, int, int], increment: int, turns: int) -> int:
+    total_bankroll, min_bankroll, win_chance = stats
+    total_bankroll_rnd: int = round_to_inc(total_bankroll, increment)
+    bankroll: int = total_bankroll_rnd // 2
+
+    while bankroll < total_bankroll_rnd:
+        max_loss, _ = calc_value_pct(
+            bankroll, min(calc_stats(bankroll, win_chance, turns)[1]))
+        if math.ceil(math.fabs(max_loss)) >= total_bankroll - min_bankroll:
+            bankroll -= increment
+            break
+        bankroll += increment
+    return bankroll
+
+
 def print_profit_stats(bankroll: int, win_outcomes: List[int]) -> None:
     max_profit, max_profit_pct = calc_value_pct(bankroll, max(win_outcomes))
     print(f'Max profit forecast: {max(win_outcomes):,}', end=' ')
