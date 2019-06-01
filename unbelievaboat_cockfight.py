@@ -14,7 +14,8 @@ def input_option(msg: str) -> str:
     while True:
         try:
             option: str = input(msg).upper()
-            break
+            if option in 'WLQ':
+                break
         except (KeyboardInterrupt, EOFError):
             print(end='\n')
     return option
