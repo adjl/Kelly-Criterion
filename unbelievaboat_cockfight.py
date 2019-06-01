@@ -14,6 +14,10 @@ def print_separator() -> None:
     print(f'{"-" * base_chance}')
 
 
+def int_input(msg: str) -> int:
+    return int(input(msg).replace(',', ''))
+
+
 def input_option(msg: str) -> str:
     while True:
         try:
@@ -23,6 +27,10 @@ def input_option(msg: str) -> str:
         except (KeyboardInterrupt, EOFError):
             print(end='\n')
     return option
+
+
+def round_to_inc(bankroll: int, increment: int) -> int:
+    return bankroll // increment * increment
 
 
 def calc_bet_size(bankroll: int, win_chance: int) -> int:
@@ -86,11 +94,32 @@ def print_loss_stats(bankroll: int, loss_outcomes: List[int]) -> None:
 
 
 def main() -> None:
-    bankroll: int = int(input('Bankroll: '))
+    total_bankroll: int = int_input('Total bankroll: ')
+    min_bankroll: int = int_input('Minimum outcome: ')
     win_chance: int = int(input('Chance of winning: '))
+
+    increment: int = 1000000000
+    turns: int = 4
+
+    total_bankroll_rnd: int = round_to_inc(total_bankroll, increment)
+    bankroll: int = total_bankroll_rnd // 2
+
+    while bankroll < total_bankroll_rnd:
+        max_loss, _ = calc_value_pct(
+            bankroll, min(calc_stats(bankroll, win_chance, turns)[1]))
+        if math.ceil(math.fabs(max_loss)) >= total_bankroll - min_bankroll:
+            bankroll -= increment
+            break
+        bankroll += increment
+
+    if bankroll >= total_bankroll:
+        bankroll = total_bankroll_rnd // 2
+
     init_bankroll: int = bankroll
     init_win_chance: int = win_chance
-    turns: int = 4
+
+    print_separator()
+    print(f'Optimal bankroll: {bankroll:,}')
 
     win_outcomes, loss_outcomes = calc_stats(bankroll, win_chance, turns)
     print_separator()
