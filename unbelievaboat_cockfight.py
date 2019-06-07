@@ -11,7 +11,7 @@ base_chance: int = 70
 
 
 def print_separator() -> None:
-    print(f'{"-" * base_chance}')
+    print(f'{"-" * 70}')
 
 
 def int_input(msg: str) -> int:
@@ -52,8 +52,10 @@ def calc_stats(
         bankroll: int, win_chance: int, turns: int) -> Tuple[List[int], List[int]]:
     outcomes: List[int] = []
     outcomes = calc_all_outcomes(outcomes, bankroll, win_chance, turns)
-    win_outcomes: List[int] = [outcome for outcome in outcomes if outcome > bankroll]
-    loss_outcomes: List[int] = [outcome for outcome in outcomes if outcome < bankroll]
+    win_outcomes: List[int] = list(filter(
+        lambda outcome: outcome > bankroll, outcomes))  # type: ignore
+    loss_outcomes: List[int] = list(filter(
+        lambda outcome: outcome < bankroll, outcomes))  # type: ignore
     return win_outcomes, loss_outcomes
 
 
@@ -76,6 +78,18 @@ def calc_bankroll(stats: Tuple[int, int, int], increment: int, turns: int) -> in
             break
         bankroll += increment
     return bankroll
+
+
+def calc_profit_chance(win_chance: int) -> Tuple[float, float]:
+    w: float = win_chance / 100.0
+    b: float = base_chance / 100.0
+    max_profit_chance: float = w * (w + 0.01) * (w + 0.02) * (w + 0.03)
+    profit_chance: float = max_profit_chance
+    profit_chance += w * (w + 0.01) * (w + 0.02) * (0.97 - w)
+    profit_chance += w * (w + 0.01) * (0.98 - w) * b
+    profit_chance += w * (0.99 - w) * b * (b + 0.01)
+    profit_chance += (1.0 - w) * b * (b + 0.01) * (b + 0.02)
+    return max_profit_chance * 100.0, profit_chance * 100.0
 
 
 def print_profit_stats(bankroll: int, win_outcomes: List[int]) -> None:
@@ -108,6 +122,12 @@ def print_loss_stats(bankroll: int, loss_outcomes: List[int]) -> None:
     print(f'({max_loss:+,}, {max_loss_pct:+.2f}%)')
 
 
+def print_profit_chance(win_chance: int) -> None:
+    max_profit_chance, profit_chance = calc_profit_chance(win_chance)
+    print(f'Chance of max profit: {max_profit_chance:.2f}%')
+    print(f'Chance of profit: {profit_chance:.2f}%')
+
+
 def main() -> None:
     total_bankroll: int = int_input('Total bankroll: ')
     win_chance: int = int(input('Chance of winning: '))
@@ -135,6 +155,9 @@ def main() -> None:
     print_separator()
     print_profit_stats(bankroll, win_outcomes)
     print_loss_stats(bankroll, loss_outcomes)
+
+    print_separator()
+    print_profit_chance(win_chance)
 
     for _ in range(turns):
         optimal_bet: int = calc_bet_size(bankroll, win_chance)
