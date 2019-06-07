@@ -126,7 +126,7 @@ def main() -> None:
     init_win_chance: int = win_chance
 
     print_separator()
-    print(f'Optimal bankroll: {bankroll:,}')
+    print(f'Optimal bankroll: ({bankroll:,}) {bankroll}')
 
     win_outcomes, loss_outcomes = calc_stats(bankroll, win_chance, turns)
     print_separator()
