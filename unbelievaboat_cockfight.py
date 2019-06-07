@@ -18,11 +18,11 @@ def int_input(msg: str) -> int:
     return int(input(msg).replace(',', ''))
 
 
-def input_option(msg: str) -> str:
+def input_option(msg: str, options: str) -> str:
     while True:
         try:
             option: str = input(msg).upper()
-            if option in 'WLQ':
+            if option in options:
                 break
         except (KeyboardInterrupt, EOFError):
             print(end='\n')
@@ -110,11 +110,14 @@ def print_loss_stats(bankroll: int, loss_outcomes: List[int]) -> None:
 
 def main() -> None:
     total_bankroll: int = int_input('Total bankroll: ')
-    min_bankroll: int = int_input('Minimum outcome: ')
     win_chance: int = int(input('Chance of winning: '))
-    turns: int = 4
+    option: str = input_option('[C]onservative or [A]ggressive: ', 'CA')
+    min_bankroll: int = int_input(
+        'Minimum outcome: ') if option == 'A' else total_bankroll
 
     bankroll: int = 0
+    turns: int = 4
+
     increment: int = 1000000000
     if total_bankroll > min_bankroll:
         bankroll = calc_bankroll(
@@ -138,7 +141,7 @@ def main() -> None:
         print_separator()
         print(f'Optimal bet: ({optimal_bet:,}) {optimal_bet}')
 
-        option: str = input_option('[W]in, [L]oss or [Q]uit: ')
+        option = input_option('[W]in, [L]oss or [Q]uit: ', 'WLQ')
         if option == 'Q':
             break
         bankroll += optimal_bet if option == 'W' else -optimal_bet
