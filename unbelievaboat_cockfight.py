@@ -67,16 +67,13 @@ def calc_value_pct(bankroll: int, outcome: int) -> Tuple[int, float]:
 
 def calc_bankroll(stats: Tuple[int, int, int], increment: int, turns: int) -> int:
     total_bankroll, min_bankroll, win_chance = stats
-    total_bankroll_rnd: int = round_to_inc(total_bankroll, increment)
-    bankroll: int = total_bankroll_rnd // 2
-
-    while bankroll < total_bankroll_rnd:
+    bankroll: int = round_to_inc(total_bankroll, increment)
+    while True:
         max_loss, _ = calc_value_pct(
             bankroll, min(calc_stats(bankroll, win_chance, turns)[1]))
-        if math.ceil(math.fabs(max_loss)) >= total_bankroll - min_bankroll:
-            bankroll -= increment
+        if math.ceil(math.fabs(max_loss)) <= total_bankroll - min_bankroll:
             break
-        bankroll += increment
+        bankroll -= increment
     return bankroll
 
 
@@ -132,8 +129,8 @@ def main() -> None:
     total_bankroll: int = int_input('Total bankroll: ')
     win_chance: int = int(input('Chance of winning: '))
     option: str = input_option('[C]onservative or [A]ggressive: ', 'CA')
-    min_bankroll: int = int_input(
-        'Minimum outcome: ') if option == 'A' else total_bankroll
+    min_bankroll: int = (int_input('Minimum outcome: ')
+                         if option == 'A' else total_bankroll)
 
     bankroll: int = 0
     turns: int = 4
@@ -142,7 +139,7 @@ def main() -> None:
     if total_bankroll > min_bankroll:
         bankroll = calc_bankroll(
             (total_bankroll, min_bankroll, win_chance), increment, turns)
-    if bankroll == 0 or bankroll >= total_bankroll:
+    if bankroll == 0:
         bankroll = round_to_inc(total_bankroll, increment) // 2
 
     init_bankroll: int = bankroll
