@@ -3,7 +3,7 @@
 		"path": "."
 	}],
 	"settings": {
-		"python.pythonPath": "/home/adjl/.local/share/virtualenvs/KellyCriterion-aMa4LbHu/bin/python",
+		"python.pythonPath": "~/.local/share/virtualenvs/KellyCriterion-aMa4LbHu/bin/python",
 		"terminal.integrated.cwd": "."
 	}
 }
